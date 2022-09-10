@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function MetaData({ data, searchValue }) {
   const [searchData, setSearchData] = useState();
@@ -18,8 +20,13 @@ export default function MetaData({ data, searchValue }) {
       .patch(`http://localhost:5000/api/v1/metadata/${searchValue}`, body)
       .then(function (response) {
         if (response?.data?.data?.acknowledged) {
+          toast.success("Update Successfully", {
+            position: toast.POSITION.TOP_CENTER,
+          });
         } else {
-          alert("Something went wrong");
+          toast.error("Failed to Update", {
+            position: toast.POSITION.TOP_CENTER,
+          });
         }
       });
     event.preventDefault();
@@ -166,6 +173,7 @@ export default function MetaData({ data, searchValue }) {
       </label>
       <br />
       <input type="submit" value="Update" onClick={handleUpdate} />
+      <ToastContainer />
     </form>
   );
 }

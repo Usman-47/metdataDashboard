@@ -15,6 +15,55 @@ const createMetadata = async (data) => {
   });
 };
 
+const getAllMetadataWithSelectedKeys = async () => {
+  try {
+    // return await MetadataModel.aggregate([
+    //   {
+    //     $match: {
+    //       "attributes.trait_type": "Rarity",
+    //       "attributes.trait_type": "Sex",
+    //     },
+    //   },
+    //   {
+    //     $addFields: {
+    //       attributes: {
+    //         $filter: {
+    //           input: "$attributes",
+    //           as: "attributes",
+    //           cond: {
+    //             $in: ["$$attributes.trait_type", ["Sex", "Rarity"]],
+    //           },
+    //         },
+    //       },
+    //     },
+    //   },
+    // ]);
+    return await MetadataModel.aggregate([
+      {
+        $match: {
+          "attributes.trait_type": "Rarity",
+          "attributes.trait_type": "Sex",
+        },
+      },
+      {
+        $project: {
+          attributes: {
+            $filter: {
+              input: "$attributes",
+              as: "attributes",
+              cond: {
+                $in: ["$$attributes.trait_type", ["Sex", "Rarity"]],
+              },
+            },
+          },
+        },
+      },
+    ]);
+  } catch (err) {
+    console.log(err.message);
+  }
+};
+
 const getAllMetadata = async () => {
   try {
     return await MetadataModel.find();
@@ -125,4 +174,5 @@ module.exports = {
   updateMetadataById,
   getMetadataByTrait,
   countNumberOfTrait,
+  getAllMetadataWithSelectedKeys,
 };

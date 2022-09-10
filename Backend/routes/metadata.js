@@ -10,11 +10,21 @@ const {
   updateMetadataById,
   getMetadataByTrait,
   countNumberOfTrait,
+  getAllMetadataWithSelectedKeys,
 } = require("../services/metadata");
 
 router.get("/getByTrait/:trait", async (req, res, next) => {
   try {
     const students = await getMetadataByTrait(req.params.trait);
+    res.json(students);
+  } catch (error) {
+    next(error);
+  }
+});
+
+router.get("/getAllResultWithSpecificData", async (req, res, next) => {
+  try {
+    const students = await getAllMetadataWithSelectedKeys();
     res.json(students);
   } catch (error) {
     next(error);

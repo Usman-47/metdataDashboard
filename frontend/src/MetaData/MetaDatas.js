@@ -3,6 +3,8 @@ import "./todoPage.css";
 import "font-awesome/css/font-awesome.min.css";
 import axios from "axios";
 import MetaData from "./MetaData";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 export default function MetaDatas() {
   const [searchValue, setSearchValue] = useState();
@@ -11,6 +13,7 @@ export default function MetaDatas() {
   const [swap1, setSwap1] = useState();
   const [swap2, setSwap2] = useState();
   const [countResult, setCountResult] = useState();
+  const [specificFileldsResults, setSpecificFileldsResults] = useState();
   const [countTraitArray, setCountTraitArray] = useState([
     "Male",
     "Female",
@@ -23,15 +26,6 @@ export default function MetaDatas() {
     try {
       const getResult = async () => {
         let tempArray = [];
-        // countTraitArray?.map(async (data, i, arr) => {
-        //   let result = await axios.get(
-        //     `http://localhost:5000/api/v1/metadata/countNumberOfTrait/${data}`
-        //   );
-        //   tempArray.push({ data, count: result.data });
-        //   if (arr.length - 1 === i) {
-        //     setCountResult(tempArray);
-        //   }
-        // });
 
         for (let i = 0; i < countTraitArray.length; i++) {
           let result = await axios.get(
@@ -39,10 +33,16 @@ export default function MetaDatas() {
           );
           tempArray.push({ data: countTraitArray[i], count: result.data });
         }
-        // Promise.all(tempArray).then(() => {
+
         setCountResult(tempArray);
-        // });
       };
+      const getResultWithSpecificFeilds = async () => {
+        let spcificFieldResult = await axios.get(
+          `http://localhost:5000/api/v1/metadata/getAllResultWithSpecificData`
+        );
+        setSpecificFileldsResults(spcificFieldResult?.data);
+      };
+      getResultWithSpecificFeilds();
       getResult();
     } catch (err) {
       console.log(err.message);
@@ -57,10 +57,21 @@ export default function MetaDatas() {
         let tempArray = [];
         tempArray.push(response.data);
         setSearchData(tempArray);
+        if (response.data) {
+          toast.success("Data Found", {
+            position: toast.POSITION.TOP_CENTER,
+          });
+        } else {
+          toast.error("Data Not Found", {
+            position: toast.POSITION.TOP_CENTER,
+          });
+        }
       })
       .catch((err) => {
         console.log(err);
-        alert(err);
+        toast.error(err, {
+          position: toast.POSITION.TOP_CENTER,
+        });
       });
     event.preventDefault();
   };
@@ -72,10 +83,21 @@ export default function MetaDatas() {
       )
       .then(function (response) {
         setSearchData(response.data);
+        if (response.data) {
+          toast.success("Data Found", {
+            position: toast.POSITION.TOP_CENTER,
+          });
+        } else {
+          toast.error("Data Not Found", {
+            position: toast.POSITION.TOP_CENTER,
+          });
+        }
       })
       .catch((err) => {
         console.log(err);
-        alert(err);
+        toast.error(err, {
+          position: toast.POSITION.TOP_CENTER,
+        });
       });
     event.preventDefault();
   };
@@ -84,12 +106,17 @@ export default function MetaDatas() {
     try {
       event.preventDefault();
 
-      if (!swap1 || !swap2) {
-        alert("Please enter both value");
+      if ((swap1 && swap1.length < 1) || (swap2 && swap2.length < 1)) {
+        toast.error("Please enter both value", {
+          position: toast.POSITION.TOP_CENTER,
+        });
         return;
       }
       if (swap1?.length !== swap2?.length) {
-        alert("Please enter both value in same length");
+        toast.error("Please enter both value in same length", {
+          position: toast.POSITION.TOP_CENTER,
+        });
+
         return;
       }
       swap1?.map((v1, i1) => {
@@ -115,10 +142,25 @@ export default function MetaDatas() {
                         `http://localhost:5000/api/v1/metadata/updateMetadataById/${SwapIdFor2}`,
                         body
                       )
-                      .then(function (response) {})
+                      .then(function (response) {
+                        if (
+                          response.data.data.modifiedCount &&
+                          response.data.data.modifiedCount >= 1
+                        ) {
+                          toast.success(`Swap successfully`, {
+                            position: toast.POSITION.TOP_CENTER,
+                          });
+                        } else {
+                          toast.error("Swap Failed", {
+                            position: toast.POSITION.TOP_CENTER,
+                          });
+                        }
+                      })
                       .catch((err) => {
                         console.log(err);
-                        alert(err);
+                        toast.error(err, {
+                          position: toast.POSITION.TOP_CENTER,
+                        });
                       });
                   })
                   .catch((err) => {
@@ -224,6 +266,22 @@ export default function MetaDatas() {
         <br />
         <br />
       </div>
+      <table>
+        <tr>
+          <th>File</th>
+          <th>Rarity</th>
+          <th>Sex</th>
+        </tr>
+        {specificFileldsResults &&
+          specificFileldsResults.map((data, i) => (
+            <tr>
+              <td>{++i}</td>
+              <td>{data.attributes[0].value}</td>
+              <td>{data.attributes[1].value}</td>
+            </tr>
+          ))}
+      </table>
+      <ToastContainer />
     </div>
   );
 }
