@@ -12,6 +12,9 @@ export default function MetaDatas() {
   const [searchData, setSearchData] = useState();
   const [swap1, setSwap1] = useState();
   const [swap2, setSwap2] = useState();
+  const [email, setEmail] = useState();
+  const [password, setPassword] = useState();
+  const [isLogin, setIsLogin] = useState();
   const [countResult, setCountResult] = useState();
   const [specificFileldsResults, setSpecificFileldsResults] = useState();
   const [countTraitArray, setCountTraitArray] = useState([
@@ -179,109 +182,174 @@ export default function MetaDatas() {
       alert(err);
     }
   };
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    if (email === "kinglion@proudlionclub.com" && password === "HiC^FOl!L&Q4") {
+      setIsLogin(true);
+      toast.success("Login Successfully");
+    } else {
+      toast.error("Login Failed");
+      // toast.error(`Incorrect Email / Password`);
+      // toast.error("Login Failed", {
+      //   position: toast.POSITION.TOP_CENTER,
+      // });
+      console.log("failed");
+      setIsLogin(false);
+    }
+  };
   return (
-    <div className="todo-container">
-      <div>
-        <h3 className="display-1 text-white">Stats</h3>
-        {countResult &&
-          countResult?.map((data) => (
-            <>
-              <div>{`${data.data} : ${data.count}`}</div>
-              <br />
-            </>
-          ))}
+    <>
+      {isLogin ? (
+        <div className="todo-container">
+          <div>
+            <h3 className="display-1 text-white">Stats</h3>
+            {countResult &&
+              countResult?.map((data) => (
+                <>
+                  <div>{`${data.data} : ${data.count}`}</div>
+                  <br />
+                </>
+              ))}
 
-        <h3 className="display-1 text-white">Update MetaData</h3>
-        <form>
-          <label>
-            Name :
-            <input
-              type="text"
-              name="name"
-              value={searchValue}
-              onChange={(event) => {
-                setSearchValue(`${event.target.value}`);
-                setTraitSearchValue("");
-              }}
-            />
-          </label>
-          <input type="submit" value="Search" onClick={handleSearch} />
-        </form>
-        <br />
-        <form>
-          <label>
-            Trait :
-            <input
-              type="text"
-              name="name"
-              value={traitSearchValue}
-              onChange={(event) => {
-                setTraitSearchValue(`${event.target.value}`);
-                setSearchValue("");
-              }}
-            />
-          </label>
-          <input type="submit" value="Search" onClick={handleTraitSearch} />
-        </form>
-        <br />
+            <h3 className="display-1 text-white">Update MetaData</h3>
+            <form>
+              <label>
+                Name :
+                <input
+                  type="text"
+                  name="name"
+                  value={searchValue}
+                  onChange={(event) => {
+                    setSearchValue(`${event.target.value}`);
+                    setTraitSearchValue("");
+                  }}
+                />
+              </label>
+              <input type="submit" value="Search" onClick={handleSearch} />
+            </form>
+            <br />
+            <form>
+              <label>
+                Trait :
+                <input
+                  type="text"
+                  name="name"
+                  value={traitSearchValue}
+                  onChange={(event) => {
+                    setTraitSearchValue(`${event.target.value}`);
+                    setSearchValue("");
+                  }}
+                />
+              </label>
+              <input type="submit" value="Search" onClick={handleTraitSearch} />
+            </form>
+            <br />
 
-        {searchData &&
-          searchData?.map((data) => (
-            <>
-              <MetaData
-                data={data}
-                searchValue={
-                  searchValue
-                    ? searchValue
-                    : data?.name?.replace("Proud Lions Club #", "")
-                }
-              />
-              <br />
-              <br />
-            </>
-          ))}
+            {searchData &&
+              searchData?.map((data) => (
+                <>
+                  <MetaData
+                    data={data}
+                    searchValue={
+                      searchValue
+                        ? searchValue
+                        : data?.name?.replace("Proud Lions Club #", "")
+                    }
+                  />
+                  <br />
+                  <br />
+                </>
+              ))}
 
-        <h3 className="display-1 text-white">Swap Metadata</h3>
-        <form>
-          <label>
-            Name #1:
-            <input
-              type="text"
-              name="name"
-              onChange={(e) => setSwap1(e?.target?.value?.split(","))}
-            />
-          </label>
-          <label>
-            Name #2:
-            <input
-              type="text"
-              name="name"
-              onChange={(e) => setSwap2(e?.target?.value?.split(","))}
-            />
-          </label>
-          <br />
-          <input type="submit" value="Swap" onClick={handleSwap} />
-        </form>
-        <br />
-        <br />
-        <br />
-      </div>
-      <table>
-        <tr>
-          <th>File</th>
-          <th>Rarity</th>
-          <th>Sex</th>
-        </tr>
-        {specificFileldsResults &&
-          specificFileldsResults.map((data, i) => (
+            <h3 className="display-1 text-white">Swap Metadata</h3>
+            <form>
+              <label>
+                Name #1:
+                <input
+                  type="text"
+                  name="name"
+                  onChange={(e) => setSwap1(e?.target?.value?.split(","))}
+                />
+              </label>
+              <label>
+                Name #2:
+                <input
+                  type="text"
+                  name="name"
+                  onChange={(e) => setSwap2(e?.target?.value?.split(","))}
+                />
+              </label>
+              <br />
+              <input type="submit" value="Swap" onClick={handleSwap} />
+            </form>
+            <br />
+            <br />
+            <br />
+          </div>
+          <table>
             <tr>
-              <td>{++i}</td>
-              <td>{data.attributes[0].value}</td>
-              <td>{data.attributes[1].value}</td>
+              <th>File</th>
+              <th>Rarity</th>
+              <th>Sex</th>
             </tr>
-          ))}
-      </table>
-      <ToastContainer />
-    </div>
+            {specificFileldsResults &&
+              specificFileldsResults.map((data, i) => (
+                <tr>
+                  <td>{++i}</td>
+                  <td>{data.attributes[0].value}</td>
+                  <td>{data.attributes[1].value}</td>
+                </tr>
+              ))}
+          </table>
+          <ToastContainer />
+        </div>
+      ) : (
+        <>
+          <h1 style={{ textAlign: "center" }}>Login to Admin Panel</h1>
+          <div
+            style={{
+              width: 375,
+              display: "flex",
+              flexDirection: "column",
+              padding: 20,
+              marginTop: 40,
+              backgroundColor: "rgba(0,0,0,0.5)",
+              borderRadius: 30,
+              marginRight: "auto",
+              marginLeft: "auto",
+              textAlign: "center",
+              alignItems: "center",
+            }}
+          >
+            <label className="whiteColor">
+              Email: <br />
+              <input
+                type="text"
+                name="Email"
+                onChange={(e) => setEmail(e.target.value)}
+              />
+            </label>
+            <label className="whiteColor">
+              Password: <br />
+              <input
+                type="password"
+                name="Password"
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </label>
+            <button
+              style={{ marginTop: 20, width: 100, borderRadius: 30 }}
+              onClick={handleLogin}
+            >
+              {" "}
+              Login{" "}
+            </button>
+          </div>
+          <ToastContainer />
+        </>
+      )}
+    </>
   );
 }
